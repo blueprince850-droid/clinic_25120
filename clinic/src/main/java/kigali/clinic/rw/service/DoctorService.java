@@ -5,13 +5,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import kigali.clinic.rw.domain.Appointment;
-import kigali.clinic.rw.domain.AppointmentStatus;
 import kigali.clinic.rw.domain.Doctor;
 import kigali.clinic.rw.repository.DoctorRepository;
 
@@ -31,15 +26,12 @@ public class DoctorService {
     }
 
     public Doctor getDoctorById(UUID id) {
-        Optional<Doctor> doctor = doctorRepo.findById(id);
-        return doctor.orElse(null);
+        return doctorRepo.findById(id).orElse(null);
     }
 
     public String updateDoctor(UUID id, Doctor updated) {
         Optional<Doctor> existing = doctorRepo.findById(id);
-        if (existing.isEmpty()) {
-            return "Doctor with id " + id + " not found";
-        }
+        if (existing.isEmpty()) return "Doctor with id " + id + " not found";
         Doctor d = existing.get();
         d.setFirstName(updated.getFirstName());
         d.setLastName(updated.getLastName());
@@ -49,31 +41,20 @@ public class DoctorService {
     }
 
     public String deleteDoctor(UUID id) {
-        if (!doctorRepo.existsById(id)) {
-            return "Doctor with id " + id + " not found";
-        }
+        if (!doctorRepo.existsById(id)) return "Doctor with id " + id + " not found";
         doctorRepo.deleteById(id);
         return "Doctor deleted successfully";
     }
 
-    public List<Appointment> getPendingAppointments(UUID doctorId) {
-        return doctorRepo.findByDoctorIdAndStatusOrderByDateAsc(doctorId, AppointmentStatus.SCHEDULED);
+    public List<Doctor> getDoctorsBySpecialization(String name) {
+        return doctorRepo.findBySpecializationNameIgnoreCase(name);
     }
 
-    public List<Appointment> getExpiredPendingAppointments() {
-        return doctorRepo.findExpiredPendingAppointments();
+    public List<Doctor> getDoctorsWithoutOffice() {
+        return doctorRepo.findDoctorsWithoutOffice();
     }
 
-    public List<Object[]> countAppointmentsPerDoctor() {
-        return doctorRepo.countAppointmentsPerDoctor();
-    }
-
-    public List<Appointment> getAppointmentsBySpecialization(String specName) {
-        return doctorRepo.findAppointmentsByDoctorSpecialization(specName);
-    }
-
-    public Page<Appointment> getDoctorAppointmentsPaginated(UUID doctorId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return doctorRepo.findAppointmentsByDoctorId(doctorId, pageable);
+    public boolean existsById(UUID id) {
+        return doctorRepo.existsById(id);
     }
 }

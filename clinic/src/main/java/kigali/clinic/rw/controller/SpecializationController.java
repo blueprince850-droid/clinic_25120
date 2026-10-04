@@ -10,7 +10,7 @@ import kigali.clinic.rw.domain.Specialization;
 import kigali.clinic.rw.service.SpecializationService;
 
 @RestController
-@RequestMapping("/specializations")
+@RequestMapping("/api/specializations")
 public class SpecializationController {
 
     @Autowired
@@ -24,6 +24,11 @@ public class SpecializationController {
     @GetMapping
     public List<Specialization> getAllSpecializations() {
         return specializationService.getAllSpecializations();
+    }
+
+    @GetMapping("/unused")
+    public List<Specialization> getUnused() {
+        return specializationService.getUnusedSpecializations();
     }
 
     @GetMapping("/{id}")
@@ -41,4 +46,3 @@ public class SpecializationController {
         return specializationService.deleteSpecialization(id);
     }
 }
-

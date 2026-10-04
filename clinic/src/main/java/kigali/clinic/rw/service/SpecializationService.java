@@ -26,15 +26,12 @@ public class SpecializationService {
     }
 
     public Specialization getSpecializationById(UUID id) {
-        Optional<Specialization> s = specializationRepo.findById(id);
-        return s.orElse(null);
+        return specializationRepo.findById(id).orElse(null);
     }
 
     public String updateSpecialization(UUID id, Specialization updated) {
         Optional<Specialization> existing = specializationRepo.findById(id);
-        if (existing.isEmpty()) {
-            return "Specialization with id " + id + " not found";
-        }
+        if (existing.isEmpty()) return "Specialization with id " + id + " not found";
         Specialization s = existing.get();
         s.setName(updated.getName());
         specializationRepo.save(s);
@@ -42,11 +39,12 @@ public class SpecializationService {
     }
 
     public String deleteSpecialization(UUID id) {
-        if (!specializationRepo.existsById(id)) {
-            return "Specialization with id " + id + " not found";
-        }
+        if (!specializationRepo.existsById(id)) return "Specialization with id " + id + " not found";
         specializationRepo.deleteById(id);
         return "Specialization deleted successfully";
     }
-}
 
+    public List<Specialization> getUnusedSpecializations() {
+        return specializationRepo.findUnusedSpecializations();
+    }
+}

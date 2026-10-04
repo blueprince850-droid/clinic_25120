@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,6 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
-    // A4: returns 409 CONFLICT if the doctor is already booked
     @PostMapping
     public ResponseEntity<String> createAppointment(@RequestBody Appointment appointment) {
         String msg = appointmentService.saveAppointment(appointment);
@@ -43,11 +43,40 @@ public class AppointmentController {
 
     @GetMapping("/between")
     public List<Appointment> getBetween(@RequestParam String start, @RequestParam String end) {
-        LocalDate localStart = LocalDate.parse(start);
-        LocalDate localEnd   = LocalDate.parse(end);
-        Date startDate = Date.valueOf(localStart);
-        Date endDate   = Date.valueOf(localEnd);
+        Date startDate = Date.valueOf(LocalDate.parse(start));
+        Date endDate   = Date.valueOf(LocalDate.parse(end));
         return appointmentService.getAppointmentsBetween(startDate, endDate);
+    }
+
+    @GetMapping("/stats/by-status")
+    public List<Object[]> statsByStatus() {
+        return appointmentService.countByStatus();
+    }
+
+    @GetMapping("/stats/busiest-office")
+    public ResponseEntity<?> busiestOffice() {
+        List<Object[]> rows = appointmentService.getBusiestOffice();
+        if (rows.isEmpty()) return ResponseEntity.ok("No appointments yet");
+        return ResponseEntity.ok(rows.get(0));
+    }
+
+    @PatchMapping("/cancel-day")
+    public String cancelDay(@RequestParam UUID doctorId, @RequestParam String date) {
+        int n = appointmentService.cancelAppointmentsOfDay(doctorId, Date.valueOf(LocalDate.parse(date)));
+        return n + " appointments cancelled";
+    }
+
+    @GetMapping("/page")
+    public Page<Appointment> page(@RequestParam int page,
+                                  @RequestParam int size,
+                                  @RequestParam String sort) {
+        return appointmentService.getPage(page, size, sort);
+    }
+
+    @DeleteMapping("/cancelled-before")
+    public String cleanCancelledBefore(@RequestParam String date) {
+        int n = appointmentService.cleanCancelledBefore(Date.valueOf(LocalDate.parse(date)));
+        return n + " appointments deleted";
     }
 
     @GetMapping("/{id}")

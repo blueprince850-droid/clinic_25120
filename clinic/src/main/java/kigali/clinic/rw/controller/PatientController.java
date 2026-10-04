@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import kigali.clinic.rw.domain.Patient;
@@ -26,10 +27,22 @@ public class PatientController {
         return patientService.getAllPatients();
     }
 
-    // ---- A1: Derived query endpoint ----
     @GetMapping("/by-last-name")
     public List<Patient> getByLastName(@RequestParam String lastName) {
         return patientService.getPatientsByLastName(lastName);
+    }
+
+    @GetMapping("/of-doctor/{doctorId}")
+    public ResponseEntity<?> getPatientsOfDoctor(@PathVariable UUID doctorId) {
+        if (!patientService.doctorExists(doctorId)) {
+            return ResponseEntity.status(404).body("The doctor with that id does not exist");
+        }
+        return ResponseEntity.ok(patientService.getPatientsOfDoctor(doctorId));
+    }
+
+    @GetMapping("/frequent")
+    public List<Patient> getFrequent(@RequestParam long min) {
+        return patientService.getFrequentPatients(min);
     }
 
     @GetMapping("/{id}")

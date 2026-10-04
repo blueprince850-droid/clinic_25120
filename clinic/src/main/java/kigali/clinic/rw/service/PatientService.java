@@ -16,6 +16,9 @@ public class PatientService {
     @Autowired
     private PatientRepository patientRepo;
 
+    @Autowired
+    private DoctorService doctorService;
+
     public String savePatient(Patient patient) {
         patientRepo.save(patient);
         return "Patient saved successfully";
@@ -26,15 +29,12 @@ public class PatientService {
     }
 
     public Patient getPatientById(UUID id) {
-        Optional<Patient> patient = patientRepo.findById(id);
-        return patient.orElse(null);
+        return patientRepo.findById(id).orElse(null);
     }
 
     public String updatePatient(UUID id, Patient updated) {
         Optional<Patient> existing = patientRepo.findById(id);
-        if (existing.isEmpty()) {
-            return "Patient with id " + id + " not found";
-        }
+        if (existing.isEmpty()) return "Patient with id " + id + " not found";
         Patient p = existing.get();
         p.setFirstName(updated.getFirstName());
         p.setLastName(updated.getLastName());
@@ -44,15 +44,24 @@ public class PatientService {
     }
 
     public String deletePatient(UUID id) {
-        if (!patientRepo.existsById(id)) {
-            return "Patient with id " + id + " not found";
-        }
+        if (!patientRepo.existsById(id)) return "Patient with id " + id + " not found";
         patientRepo.deleteById(id);
         return "Patient deleted successfully";
     }
 
-    // ---- A1 ----
     public List<Patient> getPatientsByLastName(String lastName) {
         return patientRepo.findByLastNameIgnoreCaseOrderByFirstNameAsc(lastName);
+    }
+
+    public List<Patient> getPatientsOfDoctor(UUID doctorId) {
+        return patientRepo.findPatientsOfDoctor(doctorId);
+    }
+
+    public List<Patient> getFrequentPatients(long min) {
+        return patientRepo.findFrequentPatients(min);
+    }
+
+    public boolean doctorExists(UUID doctorId) {
+        return doctorService.existsById(doctorId);
     }
 }

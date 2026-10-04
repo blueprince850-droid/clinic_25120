@@ -4,35 +4,21 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import kigali.clinic.rw.domain.Appointment;
 import kigali.clinic.rw.domain.Doctor;
 import kigali.clinic.rw.service.DoctorService;
 
 @RestController
-@RequestMapping("/doctors")
+@RequestMapping("/api/doctors")
 public class DoctorController {
 
     @Autowired
     private DoctorService doctorService;
 
-    // ---------- STATIC ROUTES (must come BEFORE /{id}) ----------
-
-    @GetMapping("/expired-appointments")
-    public List<Appointment> getExpiredPendingAppointments() {
-        return doctorService.getExpiredPendingAppointments();
-    }
-
-    @GetMapping("/appointments-count")
-    public List<Object[]> countAppointmentsPerDoctor() {
-        return doctorService.countAppointmentsPerDoctor();
-    }
-
-    @GetMapping("/by-specialization/{specName}")
-    public List<Appointment> getAppointmentsBySpecialization(@PathVariable String specName) {
-        return doctorService.getAppointmentsBySpecialization(specName);
+    @PostMapping
+    public String createDoctor(@RequestBody Doctor doctor) {
+        return doctorService.saveDoctor(doctor);
     }
 
     @GetMapping
@@ -40,24 +26,14 @@ public class DoctorController {
         return doctorService.getAllDoctors();
     }
 
-    @PostMapping
-    public String createDoctor(@RequestBody Doctor doctor) {
-        return doctorService.saveDoctor(doctor);
+    @GetMapping("/by-specialization")
+    public List<Doctor> getBySpecialization(@RequestParam String name) {
+        return doctorService.getDoctorsBySpecialization(name);
     }
 
-    // ---------- DYNAMIC ROUTES WITH /{id} ----------
-
-    @GetMapping("/{id}/pending-appointments")
-    public List<Appointment> getPendingAppointments(@PathVariable UUID id) {
-        return doctorService.getPendingAppointments(id);
-    }
-
-    @GetMapping("/{id}/appointments-page")
-    public Page<Appointment> getDoctorAppointmentsPaginated(
-            @PathVariable UUID id,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return doctorService.getDoctorAppointmentsPaginated(id, page, size);
+    @GetMapping("/without-office")
+    public List<Doctor> getWithoutOffice() {
+        return doctorService.getDoctorsWithoutOffice();
     }
 
     @GetMapping("/{id}")

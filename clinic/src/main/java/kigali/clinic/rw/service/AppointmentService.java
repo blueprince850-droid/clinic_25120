@@ -6,7 +6,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kigali.clinic.rw.domain.Appointment;
 import kigali.clinic.rw.domain.AppointmentStatus;
@@ -19,16 +24,11 @@ public class AppointmentService {
     private AppointmentRepository appointmentRepo;
 
     public String saveAppointment(Appointment appointment) {
-        // A4: check for double booking (doctor already booked that date, not cancelled)
         boolean alreadyBooked = appointmentRepo.existsByDoctorIdAndAppointmentDateAndStatusNot(
                 appointment.getDoctor().getId(),
                 appointment.getAppointmentDate(),
                 AppointmentStatus.CANCELLED);
-
-        if (alreadyBooked) {
-            return "Doctor is already booked on that date";
-        }
-
+        if (alreadyBooked) return "Doctor is already booked on that date";
         appointmentRepo.save(appointment);
         return "Appointment saved successfully";
     }
@@ -38,15 +38,12 @@ public class AppointmentService {
     }
 
     public Appointment getAppointmentById(UUID id) {
-        Optional<Appointment> appointment = appointmentRepo.findById(id);
-        return appointment.orElse(null);
+        return appointmentRepo.findById(id).orElse(null);
     }
 
     public String updateAppointment(UUID id, Appointment updated) {
         Optional<Appointment> existing = appointmentRepo.findById(id);
-        if (existing.isEmpty()) {
-            return "Appointment with id " + id + " not found";
-        }
+        if (existing.isEmpty()) return "Appointment with id " + id + " not found";
         Appointment a = existing.get();
         a.setAppointmentDate(updated.getAppointmentDate());
         a.setReason(updated.getReason());
@@ -58,9 +55,7 @@ public class AppointmentService {
     }
 
     public String deleteAppointment(UUID id) {
-        if (!appointmentRepo.existsById(id)) {
-            return "Appointment with id " + id + " not found";
-        }
+        if (!appointmentRepo.existsById(id)) return "Appointment with id " + id + " not found";
         appointmentRepo.deleteById(id);
         return "Appointment deleted successfully";
     }
@@ -71,5 +66,28 @@ public class AppointmentService {
 
     public List<Appointment> getAppointmentsBetween(Date start, Date end) {
         return appointmentRepo.findByAppointmentDateBetweenOrderByAppointmentDateAsc(start, end);
+    }
+
+    public List<Object[]> countByStatus() {
+        return appointmentRepo.countAppointmentsByStatus();
+    }
+
+    public List<Object[]> getBusiestOffice() {
+        return appointmentRepo.findBusiestOffice();
+    }
+
+    @Transactional
+    public int cancelAppointmentsOfDay(UUID doctorId, Date date) {
+        return appointmentRepo.cancelAppointmentsOfDay(doctorId, date);
+    }
+
+    public Page<Appointment> getPage(int page, int size, String sort) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sort));
+        return appointmentRepo.findAll(pageable);
+    }
+
+    @Transactional
+    public int cleanCancelledBefore(Date date) {
+        return appointmentRepo.deleteCancelledBefore(date);
     }
 }
