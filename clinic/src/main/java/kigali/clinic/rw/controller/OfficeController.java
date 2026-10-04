@@ -31,7 +31,6 @@ public class OfficeController {
         return officeService.getAllOffices();
     }
 
-    // C3 per assignment: GET /api/offices/busiest
     @GetMapping("/busiest")
     public ResponseEntity<?> busiest() {
         List<Object[]> rows = appointmentService.getBusiestOffice();
