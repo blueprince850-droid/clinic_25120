@@ -47,3 +47,11 @@ target/
 *.iml
 __MACOSX/
 .DS_Store
+target/
+*.class
+*.log
+.idea/
+.vscode/
+*.iml
+__MACOSX/
+.DS_Store
