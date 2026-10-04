@@ -1,0 +1,130 @@
+﻿{
+  "info": {
+    "name": "Clinic Quiz",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "JPA & JPQL quiz collection: A1-A4, B1-B4, C1-C4, plus pagination and cleanup bonuses."
+  },
+  "item": [
+    {
+      "name": "A1 patients-by-last-name",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/api/patients/by-last-name?lastName=uwase", "host": ["http://localhost:8080"], "path": ["api","patients","by-last-name"], "query": [{"key":"lastName","value":"uwase"}] }
+      }
+    },
+    {
+      "name": "A2 appointments-by-status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/api/appointments/by-status?status=SCHEDULED", "host": ["http://localhost:8080"], "path": ["api","appointments","by-status"], "query": [{"key":"status","value":"SCHEDULED"}] }
+      }
+    },
+    {
+      "name": "A3 appointments-between-dates",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/api/appointments/between?start=2026-10-01&end=2026-10-31", "host": ["http://localhost:8080"], "path": ["api","appointments","between"], "query": [{"key":"start","value":"2026-10-01"},{"key":"end","value":"2026-10-31"}] }
+      }
+    },
+    {
+      "name": "A4 double-booking (expect 409)",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": { "mode": "raw", "raw": "{\n  \"appointmentDate\":\"2026-11-20\",\n  \"reason\":\"Free slot\",\n  \"status\":\"SCHEDULED\",\n  \"patient\":{\"id\":\"e4593e15-0104-424f-a315-4fe1e283fba8\"},\n  \"doctor\":{\"id\":\"6337bc35-1437-4b3c-94cc-6958531e1ed4\"}\n}" },
+        "url": { "raw": "http://localhost:8080/api/appointments", "host": ["http://localhost:8080"], "path": ["api","appointments"] }
+      }
+    },
+    {
+      "name": "B1 doctors-by-specialization",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/api/doctors/by-specialization?name=cardiology", "host": ["http://localhost:8080"], "path": ["api","doctors","by-specialization"], "query": [{"key":"name","value":"cardiology"}] }
+      }
+    },
+    {
+      "name": "B2 doctors-without-office",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/api/doctors/without-office", "host": ["http://localhost:8080"], "path": ["api","doctors","without-office"] }
+      }
+    },
+    {
+      "name": "B3 unused-specializations",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/api/specializations/unused", "host": ["http://localhost:8080"], "path": ["api","specializations","unused"] }
+      }
+    },
+    {
+      "name": "B4 patients-of-doctor",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/api/patients/of-doctor/6337bc35-1437-4b3c-94cc-6958531e1ed4", "host": ["http://localhost:8080"], "path": ["api","patients","of-doctor","6337bc35-1437-4b3c-94cc-6958531e1ed4"] }
+      }
+    },
+    {
+      "name": "B4 patients-of-doctor (404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/api/patients/of-doctor/00000000-0000-0000-0000-000000000000", "host": ["http://localhost:8080"], "path": ["api","patients","of-doctor","00000000-0000-0000-0000-000000000000"] }
+      }
+    },
+    {
+      "name": "C1 appointments-per-status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/api/appointments/stats/by-status", "host": ["http://localhost:8080"], "path": ["api","appointments","stats","by-status"] }
+      }
+    },
+    {
+      "name": "C2 frequent-patients (min 3)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/api/patients/frequent?min=3", "host": ["http://localhost:8080"], "path": ["api","patients","frequent"], "query": [{"key":"min","value":"3"}] }
+      }
+    },
+    {
+      "name": "C3 busiest-office",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/api/offices/busiest", "host": ["http://localhost:8080"], "path": ["api","offices","busiest"] }
+      }
+    },
+    {
+      "name": "C4 cancel-day",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/api/appointments/cancel-day?doctorId=6337bc35-1437-4b3c-94cc-6958531e1ed4&date=2026-10-05", "host": ["http://localhost:8080"], "path": ["api","appointments","cancel-day"], "query": [{"key":"doctorId","value":"6337bc35-1437-4b3c-94cc-6958531e1ed4"},{"key":"date","value":"2026-10-05"}] }
+      }
+    },
+    {
+      "name": "Bonus pagination",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/api/appointments/page?page=0&size=5&sort=appointmentDate,desc", "host": ["http://localhost:8080"], "path": ["api","appointments","page"], "query": [{"key":"page","value":"0"},{"key":"size","value":"5"},{"key":"sort","value":"appointmentDate,desc"}] }
+      }
+    },
+    {
+      "name": "Bonus clean-cancelled",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/api/appointments/cancelled-before?date=2026-10-15", "host": ["http://localhost:8080"], "path": ["api","appointments","cancelled-before"], "query": [{"key":"date","value":"2026-10-15"}] }
+      }
+    }
+  ]
+}
