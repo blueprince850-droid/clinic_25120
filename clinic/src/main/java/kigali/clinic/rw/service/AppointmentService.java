@@ -81,8 +81,8 @@ public class AppointmentService {
         return appointmentRepo.cancelAppointmentsOfDay(doctorId, date);
     }
 
-    public Page<Appointment> getPage(int page, int size, String sort) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sort));
+    public Page<Appointment> getPage(int page, int size, String field, Sort.Direction dir) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(dir, field));
         return appointmentRepo.findAll(pageable);
     }
 

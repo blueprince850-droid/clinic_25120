@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -70,7 +71,12 @@ public class AppointmentController {
     public Page<Appointment> page(@RequestParam int page,
                                   @RequestParam int size,
                                   @RequestParam String sort) {
-        return appointmentService.getPage(page, size, sort);
+        String[] parts = sort.split(",");
+        String field = parts[0];
+        Sort.Direction dir = (parts.length > 1 && parts[1].equalsIgnoreCase("asc"))
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+        return appointmentService.getPage(page, size, field, dir);
     }
 
     @DeleteMapping("/cancelled-before")
