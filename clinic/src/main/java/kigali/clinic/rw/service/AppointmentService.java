@@ -1,5 +1,6 @@
 package kigali.clinic.rw.service;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -54,7 +55,13 @@ public class AppointmentService {
         return "Appointment deleted successfully";
     }
 
+    // A2
     public List<Appointment> getAppointmentsByStatus(AppointmentStatus status) {
         return appointmentRepo.findByStatusOrderByAppointmentDateAsc(status);
+    }
+
+    // A3
+    public List<Appointment> getAppointmentsBetween(Date start, Date end) {
+        return appointmentRepo.findByAppointmentDateBetweenOrderByAppointmentDateAsc(start, end);
     }
 }

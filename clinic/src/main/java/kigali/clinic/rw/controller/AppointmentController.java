@@ -1,5 +1,7 @@
 package kigali.clinic.rw.controller;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,9 +29,20 @@ public class AppointmentController {
         return appointmentService.getAllAppointments();
     }
 
+    // A2
     @GetMapping("/by-status")
     public List<Appointment> getByStatus(@RequestParam AppointmentStatus status) {
         return appointmentService.getAppointmentsByStatus(status);
+    }
+
+    // A3 ? parse strings into LocalDate here, then convert to java.sql.Date
+    @GetMapping("/between")
+    public List<Appointment> getBetween(@RequestParam String start, @RequestParam String end) {
+        LocalDate localStart = LocalDate.parse(start);
+        LocalDate localEnd   = LocalDate.parse(end);
+        Date startDate = Date.valueOf(localStart);
+        Date endDate   = Date.valueOf(localEnd);
+        return appointmentService.getAppointmentsBetween(startDate, endDate);
     }
 
     @GetMapping("/{id}")
