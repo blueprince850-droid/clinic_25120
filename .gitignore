@@ -39,3 +39,11 @@ build/
 application-local.properties
 application-secret.properties
 .env
+target/
+*.class
+*.log
+.idea/
+.vscode/
+*.iml
+__MACOSX/
+.DS_Store
