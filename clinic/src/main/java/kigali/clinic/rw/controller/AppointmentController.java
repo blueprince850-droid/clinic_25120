@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import kigali.clinic.rw.domain.Appointment;
+import kigali.clinic.rw.domain.AppointmentStatus;
 import kigali.clinic.rw.service.AppointmentService;
 
 @RestController
@@ -24,6 +25,11 @@ public class AppointmentController {
     @GetMapping
     public List<Appointment> getAllAppointments() {
         return appointmentService.getAllAppointments();
+    }
+
+    @GetMapping("/by-status")
+    public List<Appointment> getByStatus(@RequestParam AppointmentStatus status) {
+        return appointmentService.getAppointmentsByStatus(status);
     }
 
     @GetMapping("/{id}")
