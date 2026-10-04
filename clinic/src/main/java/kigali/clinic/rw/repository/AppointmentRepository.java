@@ -13,9 +13,12 @@ import kigali.clinic.rw.domain.AppointmentStatus;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
 
-    // A2: appointments by status, earliest date first
+    // A2
     List<Appointment> findByStatusOrderByAppointmentDateAsc(AppointmentStatus status);
 
-    // A3: appointments between two dates, inclusive, ordered by date
+    // A3
     List<Appointment> findByAppointmentDateBetweenOrderByAppointmentDateAsc(Date start, Date end);
+
+    // A4: exists check for double booking
+    boolean existsByDoctorIdAndAppointmentDateAndStatusNot(UUID doctorId, Date date, AppointmentStatus status);
 }

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import kigali.clinic.rw.domain.Appointment;
@@ -19,9 +21,14 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
+    // A4: returns 409 CONFLICT if the doctor is already booked
     @PostMapping
-    public String createAppointment(@RequestBody Appointment appointment) {
-        return appointmentService.saveAppointment(appointment);
+    public ResponseEntity<String> createAppointment(@RequestBody Appointment appointment) {
+        String msg = appointmentService.saveAppointment(appointment);
+        if (msg.equals("Doctor is already booked on that date")) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(msg);
+        }
+        return ResponseEntity.ok(msg);
     }
 
     @GetMapping
@@ -29,13 +36,11 @@ public class AppointmentController {
         return appointmentService.getAllAppointments();
     }
 
-    // A2
     @GetMapping("/by-status")
     public List<Appointment> getByStatus(@RequestParam AppointmentStatus status) {
         return appointmentService.getAppointmentsByStatus(status);
     }
 
-    // A3 ? parse strings into LocalDate here, then convert to java.sql.Date
     @GetMapping("/between")
     public List<Appointment> getBetween(@RequestParam String start, @RequestParam String end) {
         LocalDate localStart = LocalDate.parse(start);

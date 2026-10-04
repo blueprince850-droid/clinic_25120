@@ -19,6 +19,16 @@ public class AppointmentService {
     private AppointmentRepository appointmentRepo;
 
     public String saveAppointment(Appointment appointment) {
+        // A4: check for double booking (doctor already booked that date, not cancelled)
+        boolean alreadyBooked = appointmentRepo.existsByDoctorIdAndAppointmentDateAndStatusNot(
+                appointment.getDoctor().getId(),
+                appointment.getAppointmentDate(),
+                AppointmentStatus.CANCELLED);
+
+        if (alreadyBooked) {
+            return "Doctor is already booked on that date";
+        }
+
         appointmentRepo.save(appointment);
         return "Appointment saved successfully";
     }
@@ -55,12 +65,10 @@ public class AppointmentService {
         return "Appointment deleted successfully";
     }
 
-    // A2
     public List<Appointment> getAppointmentsByStatus(AppointmentStatus status) {
         return appointmentRepo.findByStatusOrderByAppointmentDateAsc(status);
     }
 
-    // A3
     public List<Appointment> getAppointmentsBetween(Date start, Date end) {
         return appointmentRepo.findByAppointmentDateBetweenOrderByAppointmentDateAsc(start, end);
     }
