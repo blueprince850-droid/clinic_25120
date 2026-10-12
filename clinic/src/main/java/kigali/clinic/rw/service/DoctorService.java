@@ -9,12 +9,17 @@ import org.springframework.stereotype.Service;
 
 import kigali.clinic.rw.domain.Doctor;
 import kigali.clinic.rw.repository.DoctorRepository;
+import kigali.clinic.rw.domain.Specialization;
+import kigali.clinic.rw.repository.SpecializationRepository;
 
 @Service
 public class DoctorService {
 
     @Autowired
     private DoctorRepository doctorRepo;
+
+    @Autowired
+    private SpecializationRepository specializationRepo;
 
     public String saveDoctor(Doctor doctor) {
         doctorRepo.save(doctor);
@@ -56,5 +61,23 @@ public class DoctorService {
 
     public boolean existsById(UUID id) {
         return doctorRepo.existsById(id);
+    }
+    public String addSpecialization(UUID doctorId, UUID specializationId) {
+        Optional<Doctor> docOpt = doctorRepo.findById(doctorId);
+        if (docOpt.isEmpty()) {
+            return "The doctor with that id does not exist";
+        }
+        Optional<Specialization> specOpt = specializationRepo.findById(specializationId);
+        if (specOpt.isEmpty()) {
+            return "That specialization does not exist";
+        }
+        Doctor doctor = docOpt.get();
+        Specialization spec = specOpt.get();
+        if (doctor.getSpecializations().contains(spec)) {
+            return "The doctor already has that specialization";
+        }
+        doctor.getSpecializations().add(spec);
+        doctorRepo.save(doctor);
+        return "Specialization added to the doctor";
     }
 }
