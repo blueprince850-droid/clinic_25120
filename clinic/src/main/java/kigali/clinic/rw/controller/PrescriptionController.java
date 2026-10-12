@@ -28,4 +28,8 @@ public class PrescriptionController {
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(msg);
     }
+    @GetMapping("/appointment/{appointmentId}")
+    public Object getByAppointment(@PathVariable UUID appointmentId) {
+        return prescriptionService.getByAppointment(appointmentId);
+    }
 }

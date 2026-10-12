@@ -34,4 +34,8 @@ public class PrescriptionService {
         prescriptionRepo.save(prescription);
         return "Prescription saved successfully";
     }
+    public Object getByAppointment(UUID appointmentId) {
+        if (!appointmentRepo.existsById(appointmentId)) return "The appointment with that id does not exist";
+        return prescriptionRepo.findByAppointmentId(appointmentId);
+    }
 }
