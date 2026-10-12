@@ -1,6 +1,7 @@
 package kigali.clinic.rw.service;
 
 import java.util.List;
+import java.sql.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -9,10 +10,13 @@ import org.springframework.stereotype.Service;
 
 import kigali.clinic.rw.domain.Doctor;
 import kigali.clinic.rw.domain.Office;
+import kigali.clinic.rw.domain.AppointmentStatus;
+import kigali.clinic.rw.domain.Appointment;
 import kigali.clinic.rw.repository.DoctorRepository;
 import kigali.clinic.rw.domain.Specialization;
 import kigali.clinic.rw.repository.SpecializationRepository;
 import kigali.clinic.rw.repository.OfficeRepository;
+import kigali.clinic.rw.repository.AppointmentRepository;
 
 @Service
 public class DoctorService {
@@ -25,6 +29,9 @@ public class DoctorService {
 
     @Autowired
     private OfficeRepository officeRepo;
+
+    @Autowired
+    private AppointmentRepository appointmentRepo;
 
     public String saveDoctor(Doctor doctor) {
         doctorRepo.save(doctor);
@@ -117,5 +124,9 @@ public class DoctorService {
         doctor.setOffice(office);
         doctorRepo.save(doctor);
         return "Office changed successfully";
+    }
+    public Object getAgenda(UUID doctorId, Date date) {
+        if (!doctorRepo.existsById(doctorId)) return "The doctor with that id does not exist";
+        return appointmentRepo.findByDoctorIdAndAppointmentDateAndStatusNot(doctorId, date, AppointmentStatus.CANCELLED);
     }
 }

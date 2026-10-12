@@ -1,5 +1,7 @@
 package kigali.clinic.rw.controller;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -89,5 +91,13 @@ public class DoctorController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(msg);
         }
         return ResponseEntity.ok(msg);
+    }
+        @GetMapping("/{doctorId}/agenda")
+    public ResponseEntity<?> getAgenda(@PathVariable UUID doctorId, @RequestParam String date) {
+        Object result = doctorService.getAgenda(doctorId, Date.valueOf(LocalDate.parse(date)));
+        if (result instanceof String) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+        }
+        return ResponseEntity.ok(result);
     }
 }
