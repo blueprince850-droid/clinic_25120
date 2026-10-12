@@ -17,4 +17,6 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, UUID
 
     @Query("SELECT p FROM Prescription p WHERE p.appointment.patient.ssNumber = :ss ORDER BY p.issuedDate DESC")
     List<Prescription> findByPatientSsNumber(@Param("ss") String ss);
+
+    boolean existsByAppointmentId(UUID appointmentId);
 }

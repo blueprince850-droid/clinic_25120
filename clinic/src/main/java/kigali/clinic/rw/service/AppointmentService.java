@@ -18,12 +18,16 @@ import org.springframework.transaction.annotation.Transactional;
 import kigali.clinic.rw.domain.Appointment;
 import kigali.clinic.rw.domain.AppointmentStatus;
 import kigali.clinic.rw.repository.AppointmentRepository;
+import kigali.clinic.rw.repository.PrescriptionRepository;
 
 @Service
 public class AppointmentService {
 
     @Autowired
     private AppointmentRepository appointmentRepo;
+
+    @Autowired
+    private PrescriptionRepository prescriptionRepo;
 
         public String saveAppointment(Appointment appointment) {
         LocalDate date = appointment.getAppointmentDate().toLocalDate();
@@ -64,7 +68,8 @@ public class AppointmentService {
     }
 
     public String deleteAppointment(UUID id) {
-        if (!appointmentRepo.existsById(id)) return "Appointment with id " + id + " not found";
+        if (!appointmentRepo.existsById(id)) return "The appointment with that id does not exist";
+        if (prescriptionRepo.existsByAppointmentId(id)) return "That appointment has prescriptions, delete them first";
         appointmentRepo.deleteById(id);
         return "Appointment deleted successfully";
     }

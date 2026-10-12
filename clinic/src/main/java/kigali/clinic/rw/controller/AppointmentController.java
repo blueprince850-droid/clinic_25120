@@ -101,8 +101,15 @@ public class AppointmentController {
     }
 
     @DeleteMapping("/{id}")
-    public String deleteAppointment(@PathVariable UUID id) {
-        return appointmentService.deleteAppointment(id);
+    public ResponseEntity<String> deleteAppointment(@PathVariable UUID id) {
+        String msg = appointmentService.deleteAppointment(id);
+        if (msg.equals("The appointment with that id does not exist")) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(msg);
+        }
+        if (msg.equals("That appointment has prescriptions, delete them first")) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(msg);
+        }
+        return ResponseEntity.ok(msg);
     }
     @PatchMapping("/{id}/status")
     public ResponseEntity<String> changeStatus(@PathVariable UUID id, @RequestParam AppointmentStatus status) {

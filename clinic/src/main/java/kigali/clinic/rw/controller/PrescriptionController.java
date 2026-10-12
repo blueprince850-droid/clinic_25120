@@ -37,4 +37,21 @@ public class PrescriptionController {
     public Object getByPatientSs(@PathVariable String ssNumber) {
         return prescriptionService.getByPatientSs(ssNumber);
     }
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updatePrescription(@PathVariable UUID id, @RequestBody Prescription prescription) {
+        String msg = prescriptionService.updatePrescription(id, prescription);
+        if (msg.equals("The prescription with that id does not exist")) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(msg);
+        }
+        return ResponseEntity.ok(msg);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deletePrescription(@PathVariable UUID id) {
+        String msg = prescriptionService.deletePrescription(id);
+        if (msg.equals("The prescription with that id does not exist")) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(msg);
+        }
+        return ResponseEntity.ok(msg);
+    }
 }
