@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kigali.clinic.rw.domain.Doctor;
+import kigali.clinic.rw.domain.Office;
 import kigali.clinic.rw.repository.DoctorRepository;
 import kigali.clinic.rw.domain.Specialization;
 import kigali.clinic.rw.repository.SpecializationRepository;
+import kigali.clinic.rw.repository.OfficeRepository;
 
 @Service
 public class DoctorService {
@@ -20,6 +22,9 @@ public class DoctorService {
 
     @Autowired
     private SpecializationRepository specializationRepo;
+
+    @Autowired
+    private OfficeRepository officeRepo;
 
     public String saveDoctor(Doctor doctor) {
         doctorRepo.save(doctor);
@@ -97,5 +102,20 @@ public class DoctorService {
         doctor.getSpecializations().remove(spec);
         doctorRepo.save(doctor);
         return "Specialization removed from the doctor";
+    }
+
+    public String changeOffice(UUID doctorId, int officeNumber) {
+        Optional<Doctor> docOpt = doctorRepo.findById(doctorId);
+        if (docOpt.isEmpty()) return "The doctor with that id does not exist";
+        Optional<Office> officeOpt = officeRepo.findByOfficeNumber(officeNumber);
+        if (officeOpt.isEmpty()) return "The office with that office number does not exist";
+        Office office = officeOpt.get();
+        if (doctorRepo.existsByOfficeIdAndIdNot(office.getId(), doctorId)) {
+            return "That office is taken by other doctor";
+        }
+        Doctor doctor = docOpt.get();
+        doctor.setOffice(office);
+        doctorRepo.save(doctor);
+        return "Office changed successfully";
     }
 }
