@@ -14,11 +14,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-@Entity 
+@Entity
 @Table (name="appointment")
 public class Appointment {
-    
-    @Id 
+
+    @Id
     @GeneratedValue (strategy = GenerationType.UUID)
     private UUID id;
 
@@ -32,11 +32,11 @@ public class Appointment {
     @Column (name="status")
     private AppointmentStatus status;
 
-    @ManyToOne 
+    @ManyToOne
     @JoinColumn (name="patient_id")
     private Patient patient;
 
-    @ManyToOne 
+    @ManyToOne
     @JoinColumn (name="doctor_id")
     private Doctor doctor;
 
@@ -79,8 +79,5 @@ public class Appointment {
     public void setDoctor(Doctor doctor) {
         this.doctor = doctor;
     }
-
-    
-
 
 }

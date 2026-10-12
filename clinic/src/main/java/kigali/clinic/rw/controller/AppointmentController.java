@@ -23,7 +23,7 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
-    @PostMapping
+    @PostMapping("/save")
     public ResponseEntity<String> createAppointment(@RequestBody Appointment appointment) {
         String msg = appointmentService.saveAppointment(appointment);
         if (msg.equals("Doctor is already booked on that date")) {
@@ -45,7 +45,7 @@ public class AppointmentController {
     @GetMapping("/between")
     public List<Appointment> getBetween(@RequestParam String start, @RequestParam String end) {
         Date startDate = Date.valueOf(LocalDate.parse(start));
-        Date endDate   = Date.valueOf(LocalDate.parse(end));
+        Date endDate = Date.valueOf(LocalDate.parse(end));
         return appointmentService.getAppointmentsBetween(startDate, endDate);
     }
 
@@ -57,7 +57,9 @@ public class AppointmentController {
     @GetMapping("/stats/busiest-office")
     public ResponseEntity<?> busiestOffice() {
         List<Object[]> rows = appointmentService.getBusiestOffice();
-        if (rows.isEmpty()) return ResponseEntity.ok("No appointments yet");
+        if (rows.isEmpty()) {
+            return ResponseEntity.ok("No appointments yet");
+        }
         return ResponseEntity.ok(rows.get(0));
     }
 
