@@ -1,6 +1,7 @@
 package kigali.clinic.rw.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,4 +21,6 @@ public interface PatientRepository extends JpaRepository<Patient, UUID> {
 
     @Query("SELECT p FROM Patient p JOIN p.appointments a GROUP BY p HAVING COUNT(a) >= :min ORDER BY COUNT(a) DESC")
     List<Patient> findFrequentPatients(@Param("min") long min);
+
+    Optional<Patient> findBySsNumber(String ssNumber);
 }

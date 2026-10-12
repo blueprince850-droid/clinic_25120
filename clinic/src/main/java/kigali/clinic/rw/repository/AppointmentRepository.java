@@ -47,4 +47,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
     int deleteCancelledBefore(@Param("date") Date date);
 
     List<Appointment> findByDoctorIdAndAppointmentDateAndStatusNot(UUID doctorId, Date date, AppointmentStatus status);
+
+    List<Appointment> findByPatientSsNumberAndAppointmentDateGreaterThanEqualAndStatusInOrderByAppointmentDateAsc(String ssNumber, Date today, List<AppointmentStatus> statuses);
 }

@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import kigali.clinic.rw.domain.Patient;
@@ -58,5 +59,14 @@ public class PatientController {
     @DeleteMapping("/{id}")
     public String deletePatient(@PathVariable UUID id) {
         return patientService.deletePatient(id);
+    }
+
+    @GetMapping("/{ssNumber}/upcoming")
+    public ResponseEntity<?> getUpcoming(@PathVariable String ssNumber) {
+        Object result = patientService.getUpcoming(ssNumber);
+        if (result instanceof String) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+        }
+        return ResponseEntity.ok(result);
     }
 }
