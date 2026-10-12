@@ -56,3 +56,5 @@ target/
 __MACOSX/
 .DS_Store
 clinic/src/main/resources/application.properties
+.github/
+HELP.md
