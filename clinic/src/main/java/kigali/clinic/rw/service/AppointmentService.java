@@ -112,4 +112,22 @@ public class AppointmentService {
         appointmentRepo.save(a);
         return "Appointment status updated successfully";
     }
+    public String reschedule(UUID id, Date newDate) {
+        Optional<Appointment> existing = appointmentRepo.findById(id);
+        if (existing.isEmpty()) return "The appointment with that id does not exist";
+        Appointment a = existing.get();
+        if (a.getStatus() == AppointmentStatus.COMPLETED) return "A COMPLETED appointment cannot be rescheduled";
+        if (a.getStatus() == AppointmentStatus.CANCELLED) return "A CANCELLED appointment cannot be rescheduled";
+        if (newDate.toLocalDate().isBefore(LocalDate.now())) return "Appointment date cannot be in the past";
+        boolean booked = appointmentRepo.existsByDoctorIdAndAppointmentDateAndStatusNot(
+                a.getDoctor().getId(),
+                newDate,
+                AppointmentStatus.CANCELLED
+        );
+        if (booked) return "Doctor is already booked on that date";
+        a.setAppointmentDate(newDate);
+        a.setStatus(AppointmentStatus.SCHEDULED);
+        appointmentRepo.save(a);
+        return "Appointment rescheduled successfully";
+    }
 }

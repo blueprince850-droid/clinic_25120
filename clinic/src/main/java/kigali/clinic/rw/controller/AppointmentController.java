@@ -115,4 +115,18 @@ public class AppointmentController {
         }
         return ResponseEntity.ok(msg);
     }
+    @PatchMapping("/{id}/reschedule")
+    public ResponseEntity<String> reschedule(@PathVariable UUID id, @RequestParam String newDate) {
+        String msg = appointmentService.reschedule(id, Date.valueOf(LocalDate.parse(newDate)));
+        if (msg.equals("The appointment with that id does not exist")) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(msg);
+        }
+        if (msg.startsWith("A COMPLETED") || msg.startsWith("A CANCELLED") || msg.equals("Appointment date cannot be in the past")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+        }
+        if (msg.equals("Doctor is already booked on that date")) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(msg);
+        }
+        return ResponseEntity.ok(msg);
+    }
 }
