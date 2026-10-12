@@ -32,4 +32,9 @@ public class PrescriptionController {
     public Object getByAppointment(@PathVariable UUID appointmentId) {
         return prescriptionService.getByAppointment(appointmentId);
     }
+
+    @GetMapping("/patient/{ssNumber}")
+    public Object getByPatientSs(@PathVariable String ssNumber) {
+        return prescriptionService.getByPatientSs(ssNumber);
+    }
 }

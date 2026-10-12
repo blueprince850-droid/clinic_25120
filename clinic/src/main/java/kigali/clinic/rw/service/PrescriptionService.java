@@ -1,6 +1,7 @@
 package kigali.clinic.rw.service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -37,5 +38,9 @@ public class PrescriptionService {
     public Object getByAppointment(UUID appointmentId) {
         if (!appointmentRepo.existsById(appointmentId)) return "The appointment with that id does not exist";
         return prescriptionRepo.findByAppointmentId(appointmentId);
+    }
+
+    public Object getByPatientSs(String ss) {
+        return prescriptionRepo.findByPatientSsNumber(ss);
     }
 }
