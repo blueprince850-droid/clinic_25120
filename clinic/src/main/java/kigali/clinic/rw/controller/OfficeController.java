@@ -52,4 +52,9 @@ public class OfficeController {
     public String deleteOffice(@PathVariable UUID id) {
         return officeService.deleteOffice(id);
     }
+
+    @GetMapping("/free")
+    public List<Office> getFree() {
+        return officeService.getFreeOffices();
+    }
 }
