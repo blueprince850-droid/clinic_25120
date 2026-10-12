@@ -80,4 +80,22 @@ public class DoctorService {
         doctorRepo.save(doctor);
         return "Specialization added to the doctor";
     }
+    public String removeSpecialization(UUID doctorId, UUID specializationId) {
+        Optional<Doctor> docOpt = doctorRepo.findById(doctorId);
+        if (docOpt.isEmpty()) {
+            return "The doctor with that id does not exist";
+        }
+        Optional<Specialization> specOpt = specializationRepo.findById(specializationId);
+        if (specOpt.isEmpty()) {
+            return "That specialization does not exist";
+        }
+        Doctor doctor = docOpt.get();
+        Specialization spec = specOpt.get();
+        if (!doctor.getSpecializations().contains(spec)) {
+            return "The doctor does not have that specialization";
+        }
+        doctor.getSpecializations().remove(spec);
+        doctorRepo.save(doctor);
+        return "Specialization removed from the doctor";
+    }
 }
