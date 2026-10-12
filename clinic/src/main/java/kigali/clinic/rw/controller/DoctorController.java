@@ -105,4 +105,9 @@ public class DoctorController {
     public List<Doctor> search(@RequestParam String name) {
         return doctorService.searchDoctors(name);
     }
+
+    @GetMapping("/workload")
+    public List<Object[]> workload(@RequestParam String start, @RequestParam String end) {
+        return doctorService.getWorkload(Date.valueOf(LocalDate.parse(start)), Date.valueOf(LocalDate.parse(end)));
+    }
 }

@@ -23,4 +23,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, UUID> {
 
     @Query("SELECT d FROM Doctor d WHERE LOWER(d.firstName) LIKE LOWER(CONCAT('%', :name, '%')) OR LOWER(d.lastName) LIKE LOWER(CONCAT('%', :name, '%')) ORDER BY d.lastName")
     List<Doctor> searchByName(@Param("name") String name);
+
+    @Query("SELECT d.firstName, d.lastName, COUNT(a) FROM Doctor d JOIN d.appointments a WHERE a.status = kigali.clinic.rw.domain.AppointmentStatus.COMPLETED AND a.appointmentDate BETWEEN :start AND :end GROUP BY d.id, d.firstName, d.lastName ORDER BY COUNT(a) DESC")
+    List<Object[]> workload(@Param("start") java.sql.Date start, @Param("end") java.sql.Date end);
 }

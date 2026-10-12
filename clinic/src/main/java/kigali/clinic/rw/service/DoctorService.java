@@ -133,4 +133,8 @@ public class DoctorService {
     public List<Doctor> searchDoctors(String name) {
         return doctorRepo.searchByName(name);
     }
+
+    public List<Object[]> getWorkload(java.sql.Date start, java.sql.Date end) {
+        return doctorRepo.workload(start, end);
+    }
 }
