@@ -104,4 +104,15 @@ public class AppointmentController {
     public String deleteAppointment(@PathVariable UUID id) {
         return appointmentService.deleteAppointment(id);
     }
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<String> changeStatus(@PathVariable UUID id, @RequestParam AppointmentStatus status) {
+        String msg = appointmentService.changeStatus(id, status);
+        if (msg.equals("The appointment with that id does not exist")) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(msg);
+        }
+        if (msg.startsWith("Cannot change status")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+        }
+        return ResponseEntity.ok(msg);
+    }
 }

@@ -57,7 +57,6 @@ public class AppointmentService {
         Appointment a = existing.get();
         a.setAppointmentDate(updated.getAppointmentDate());
         a.setReason(updated.getReason());
-        a.setStatus(updated.getStatus());
         a.setPatient(updated.getPatient());
         a.setDoctor(updated.getDoctor());
         appointmentRepo.save(a);
@@ -99,5 +98,18 @@ public class AppointmentService {
     @Transactional
     public int cleanCancelledBefore(Date date) {
         return appointmentRepo.deleteCancelledBefore(date);
+    }
+    public String changeStatus(UUID id, AppointmentStatus newStatus) {
+        Optional<Appointment> existing = appointmentRepo.findById(id);
+        if (existing.isEmpty()) return "The appointment with that id does not exist";
+        Appointment a = existing.get();
+        AppointmentStatus current = a.getStatus();
+        boolean ok = false;
+        if (current == AppointmentStatus.SCHEDULED && (newStatus == AppointmentStatus.CONFIRMED || newStatus == AppointmentStatus.CANCELLED)) ok = true;
+        if (current == AppointmentStatus.CONFIRMED && (newStatus == AppointmentStatus.COMPLETED || newStatus == AppointmentStatus.CANCELLED)) ok = true;
+        if (!ok) return "Cannot change status from " + current + " to " + newStatus;
+        a.setStatus(newStatus);
+        appointmentRepo.save(a);
+        return "Appointment status updated successfully";
     }
 }

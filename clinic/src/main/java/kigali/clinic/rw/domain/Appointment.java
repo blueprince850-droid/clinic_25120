@@ -39,6 +39,10 @@ public class Appointment {
     @ManyToOne
     @JoinColumn (name="doctor_id")
     private Doctor doctor;
+    public UUID getId() {
+        return id;
+    }
+
 
     public Date getAppointmentDate() {
         return appointmentDate;
