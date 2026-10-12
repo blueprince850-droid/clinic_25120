@@ -1,6 +1,7 @@
 package kigali.clinic.rw.service;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,12 +25,20 @@ public class AppointmentService {
     @Autowired
     private AppointmentRepository appointmentRepo;
 
-    public String saveAppointment(Appointment appointment) {
-        boolean alreadyBooked = appointmentRepo.existsByDoctorIdAndAppointmentDateAndStatusNot(
+        public String saveAppointment(Appointment appointment) {
+        LocalDate date = appointment.getAppointmentDate().toLocalDate();
+        if (date.isBefore(LocalDate.now())) {
+            return "Appointment date cannot be in the past";
+        }
+        appointment.setStatus(AppointmentStatus.SCHEDULED);
+        boolean booked = appointmentRepo.existsByDoctorIdAndAppointmentDateAndStatusNot(
                 appointment.getDoctor().getId(),
                 appointment.getAppointmentDate(),
-                AppointmentStatus.CANCELLED);
-        if (alreadyBooked) return "Doctor is already booked on that date";
+                AppointmentStatus.CANCELLED
+        );
+        if (booked) {
+            return "Doctor is already booked on that date";
+        }
         appointmentRepo.save(appointment);
         return "Appointment saved successfully";
     }

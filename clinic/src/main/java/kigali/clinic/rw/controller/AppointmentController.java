@@ -23,11 +23,14 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
-    @PostMapping("/save")
+        @PostMapping("/save")
     public ResponseEntity<String> createAppointment(@RequestBody Appointment appointment) {
         String msg = appointmentService.saveAppointment(appointment);
         if (msg.equals("Doctor is already booked on that date")) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(msg);
+        }
+        if (msg.equals("Appointment date cannot be in the past")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
         }
         return ResponseEntity.ok(msg);
     }
