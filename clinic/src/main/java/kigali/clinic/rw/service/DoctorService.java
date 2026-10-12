@@ -129,4 +129,8 @@ public class DoctorService {
         if (!doctorRepo.existsById(doctorId)) return "The doctor with that id does not exist";
         return appointmentRepo.findByDoctorIdAndAppointmentDateAndStatusNot(doctorId, date, AppointmentStatus.CANCELLED);
     }
+
+    public List<Doctor> searchDoctors(String name) {
+        return doctorRepo.searchByName(name);
+    }
 }

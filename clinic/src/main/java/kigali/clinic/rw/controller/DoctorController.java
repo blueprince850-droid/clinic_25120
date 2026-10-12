@@ -100,4 +100,9 @@ public class DoctorController {
         }
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/search")
+    public List<Doctor> search(@RequestParam String name) {
+        return doctorService.searchDoctors(name);
+    }
 }
